@@ -45,4 +45,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Scope a query to only include Search
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearch($query, $value)
+    {
+        return $query->where('name', 'LIKE', '%' . $value . '%')->orWhere('email', 'LIKE', '%' . $value . '%');
+    }
 }
