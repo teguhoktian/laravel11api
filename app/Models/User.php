@@ -47,6 +47,13 @@ class User extends Authenticatable
     }
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['role'];
+
+    /**
      * Scope a query to only include Search
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -55,5 +62,16 @@ class User extends Authenticatable
     public function scopeSearch($query, $value)
     {
         return $query->where('name', 'LIKE', '%' . $value . '%')->orWhere('email', 'LIKE', '%' . $value . '%');
+    }
+
+    /**
+     * Get the Role
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getRoleAttribute($value)
+    {
+        return $this->roles->pluck('name');
     }
 }

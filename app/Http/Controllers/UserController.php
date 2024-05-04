@@ -20,7 +20,18 @@ class UserController extends Controller
             ->orderBy('id', 'DESC')
             ->paginate($request->per_page ?: env('PER_PAGE'));
 
-        return APIResponseBuilder::success($users->setHidden(['email_verified_at', 'password', 'remember_token', 'updated_at']), __("Users list successfully loaded."));
+        return APIResponseBuilder::success(
+            $users->setHidden(
+                [
+                    'email_verified_at',
+                    'password',
+                    'remember_token',
+                    'updated_at',
+                    'roles'
+                ]
+            ),
+            __("Users list successfully loaded.")
+        );
     }
 
     public function store(Request $request)
@@ -59,14 +70,34 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $user->role = $user->roles->pluck(['name']);
-        return APIResponseBuilder::success($user->setHidden(['email_verified_at', 'password', 'remember_token', 'updated_at', 'roles']));
+        return APIResponseBuilder::success(
+            $user->setHidden(
+                [
+                    'email_verified_at',
+                    'password',
+                    'remember_token',
+                    'updated_at',
+                    'roles'
+                ]
+            )
+        );
     }
 
     public function destroy(User $user)
     {
         $u = $user;
         $user->delete();
-        return APIResponseBuilder::success($u->setHidden(['email_verified_at', 'password', 'remember_token', 'updated_at', 'roles']), __('Data deleted successfully'));
+        return APIResponseBuilder::success(
+            $u->setHidden(
+                [
+                    'email_verified_at',
+                    'password',
+                    'remember_token',
+                    'updated_at',
+                    'roles'
+                ]
+            ),
+            __('Data deleted successfully')
+        );
     }
 }
