@@ -11,7 +11,6 @@ use Illuminate\Validation\Rules;
 
 class UserController extends Controller
 {
-
     public function index(Request $request): JsonResponse
     {
         $request->merge([
@@ -33,6 +32,7 @@ class UserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'role' => ['required'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -42,6 +42,8 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $user->assignRole($request->role);
+
         return APIResponseBuilder::success($user, __("Data saved successfull."));
     }
 
@@ -49,12 +51,15 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class . ",email," . $user->id]
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class . ",email," . $user->id],
+            'role' => ['required']
         ]);
 
         $request['password'] = $user->password;
 
         $user->update($request->only('name', 'email', 'password'));
+
+        $user->syncRoles($request->role);
 
         return APIResponseBuilder::success($user, __("Data updated successfull."));
     }
