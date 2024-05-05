@@ -67,17 +67,7 @@ class UserController extends Controller
 
     public function show(User $user): JsonResponse
     {
-        return APIResponseBuilder::success(
-            $user->setHidden(
-                [
-                    'email_verified_at',
-                    'password',
-                    'remember_token',
-                    'updated_at',
-                    'roles'
-                ]
-            )
-        );
+        return APIResponseBuilder::success($user);
     }
 
     public function destroy(User $user): JsonResponse
