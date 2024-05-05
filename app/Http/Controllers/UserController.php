@@ -36,13 +36,11 @@ class UserController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
-        if ($validator->fails()) return APIResponseBuilder::invalidData(__('Unprocessable Entity'), $validator->messages());
 
         $user = User::create([
             'name' => $request->name,
@@ -55,14 +53,13 @@ class UserController extends Controller
 
     public function update(User $user, Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class . ",email," . $user->id]
         ]);
 
-        if ($validator->fails()) return APIResponseBuilder::invalidData(__('Unprocessable Entity'), $validator->messages());
-
         $request['password'] = $user->password;
+
         $user->update($request->only('name', 'email', 'password'));
 
         return APIResponseBuilder::success($user, __("Data updated successfull."));
