@@ -49,6 +49,14 @@ class APIResponseBuilder
         return self::error($message, [], $code, $additional);
     }
 
+    public static function unauthorized(
+        $message = "Unauthorized access detected. Access is denied.",
+        $code = 401,
+        $additional = []
+    ): JsonResponse {
+        return self::error($message, [], $code, $additional);
+    }
+
     protected static function buildResponse($success, $message, $data, $code, $additional, $errors = []): JsonResponse
     {
         $response = [

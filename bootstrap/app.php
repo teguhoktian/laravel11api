@@ -1,6 +1,7 @@
 <?php
 
 use App\APIResponseBuilder;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -29,5 +30,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Error Handling for Model Binding Route Exceptions
         $exceptions->render(function (NotFoundHttpException $e): JsonResponse {
             return APIResponseBuilder::notFound();
+        });
+
+        // Error Handling Unauthenticated Exceptions
+        $exceptions->render(function (AuthenticationException $e): JsonResponse {
+            return APIResponseBuilder::unauthorized();
         });
     })->create();
