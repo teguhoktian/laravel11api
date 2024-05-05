@@ -7,6 +7,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -30,16 +31,21 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         // Error Handling for Model Binding Route Exceptions
         $exceptions->render(function (NotFoundHttpException $e): JsonResponse {
-            return APIResponseBuilder::notFound();
+            return APIResponseBuilder::notFound(__('URL is not found.'), $e->getStatusCode());
         });
 
         // Error Handling Unauthenticated Exceptions
         $exceptions->render(function (AuthenticationException $e): JsonResponse {
-            return APIResponseBuilder::unauthorized();
+            return APIResponseBuilder::unauthorized($e->getMessage());
         });
 
         // Error Handling Validation Exceptions
         $exceptions->render(function (ValidationException $e): JsonResponse {
-            return APIResponseBuilder::invalidData(__("The provided data is invalid or incorrect."), $e->errors());
+            return APIResponseBuilder::invalidData($e->getMessage(), $e->errors());
+        });
+
+        // Error Handling Http Exceptions
+        $exceptions->render(function (HttpException $e): JsonResponse {
+            return APIResponseBuilder::unauthorized($e->getMessage(), $e->getStatusCode());
         });
     })->create();
