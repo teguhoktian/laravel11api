@@ -54,7 +54,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $appends = ['role'];
+    protected $appends = ['role', 'photo'];
 
     /**
      * Scope a query to only include Search
@@ -76,5 +76,16 @@ class User extends Authenticatable
     public function getRoleAttribute($value)
     {
         return $this->roles->pluck('name');
+    }
+
+    /**
+     * Get the Photo
+     *
+     * @param  string  $value
+     * @return string
+     */
+    public function getPhotoAttribute($value)
+    {
+        return 'https://eu.ui-avatars.com/api/?name=' . urlencode($this->name) . '&size=250&color=7F9CF5&background=EBF4FF';
     }
 }
