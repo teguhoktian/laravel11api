@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\APIResponseBuilder;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,23 +14,18 @@ class UserController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $request['field'] = request('field') ?: "id";
-        $request['direction'] = request('direction') ?: "ASC";
-        $request['per_page'] = request('per_page') ?: env('PER_PAGE');
-        $request['search'] = request('search');
+        $request->merge([
+            'field' => $request->input('field', 'id'),
+            'direction' => $request->input('direction', 'ASC'),
+            'per_page' => $request->input('per_page', env('PER_PAGE')),
+        ]);
 
-        $users = User::with(['roles'])
-            ->search($request->search)
-            ->orderBy($request->field, $request->direction)
-            ->paginate($request->per_page);
+        $users = User::with(['roles'])->search($request->search)->orderBy($request->field, $request->direction)->paginate($request->per_page);
 
-        return APIResponseBuilder::success(
-            [
-                "collections" => $users,
-                'filters' => request()->all(['search', 'per_page', 'field', 'direction'])
-            ],
-            __("Users list successfully loaded.")
-        );
+        return APIResponseBuilder::success([
+            'collections' => $users,
+            'filters' => request()->all(['search', 'per_page', 'field', 'direction'])
+        ]);
     }
 
     public function store(Request $request): JsonResponse
@@ -72,19 +66,8 @@ class UserController extends Controller
 
     public function destroy(User $user): JsonResponse
     {
-        $u = $user;
+        $userTmp = $user;
         $user->delete();
-        return APIResponseBuilder::success(
-            $u->setHidden(
-                [
-                    'email_verified_at',
-                    'password',
-                    'remember_token',
-                    'updated_at',
-                    'roles'
-                ]
-            ),
-            __('Data deleted successfully')
-        );
+        return APIResponseBuilder::success($userTmp, __('Data deleted successfully'));
     }
 }
