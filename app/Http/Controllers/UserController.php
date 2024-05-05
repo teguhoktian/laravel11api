@@ -15,26 +15,26 @@ class UserController extends Controller
 
     public function index(Request $request): JsonResponse
     {
+        $request['field'] = request('field') ?: "id";
+        $request['direction'] = request('direction') ?: "ASC";
+        $request['per_page'] = request('per_page') ?: env('PER_PAGE');
+        $request['search'] = request('search');
+
         $users = User::with(['roles'])
             ->search($request->search)
-            ->orderBy('id', 'DESC')
-            ->paginate($request->per_page ?: env('PER_PAGE'));
+            ->orderBy($request->field, $request->direction)
+            ->paginate($request->per_page);
 
         return APIResponseBuilder::success(
-            $users->setHidden(
-                [
-                    'email_verified_at',
-                    'password',
-                    'remember_token',
-                    'updated_at',
-                    'roles'
-                ]
-            ),
+            [
+                "collections" => $users,
+                'filters' => request()->all(['search', 'per_page', 'field', 'direction'])
+            ],
             __("Users list successfully loaded.")
         );
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -53,7 +53,7 @@ class UserController extends Controller
         return APIResponseBuilder::success($user, __("Data saved successfull."));
     }
 
-    public function update(User $user, Request $request)
+    public function update(User $user, Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -68,7 +68,7 @@ class UserController extends Controller
         return APIResponseBuilder::success($user, __("Data updated successfull."));
     }
 
-    public function show(User $user)
+    public function show(User $user): JsonResponse
     {
         return APIResponseBuilder::success(
             $user->setHidden(
@@ -83,7 +83,7 @@ class UserController extends Controller
         );
     }
 
-    public function destroy(User $user)
+    public function destroy(User $user): JsonResponse
     {
         $u = $user;
         $user->delete();
