@@ -28,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
         $this->siteSettings();
     }
 
+    /**
+     * Site Setting Method
+     * 
+     * @return void
+     */
     public function siteSettings(): void
     {
         $settings = app(GeneralSetting::class);

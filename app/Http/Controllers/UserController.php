@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\APIResponseBuilder;
 use App\Models\User;
+use App\Settings\GeneralSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -11,12 +12,12 @@ use Illuminate\Validation\Rules;
 
 class UserController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, GeneralSetting $settings): JsonResponse
     {
         $request->merge([
             'field' => $request->input('field', 'id'),
-            'direction' => $request->input('direction', 'ASC'),
-            'per_page' => $request->input('per_page', env('PER_PAGE')),
+            'direction' => $request->input('direction', 'DESC'),
+            'per_page' => $request->input('per_page', $settings->per_page),
         ]);
 
         $users = User::with(['roles'])->search($request->search)->orderBy($request->field, $request->direction)->paginate($request->per_page);
