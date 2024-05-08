@@ -88,4 +88,14 @@ class User extends Authenticatable
     {
         return 'https://eu.ui-avatars.com/api/?name=' . urlencode($this->name) . '&size=250&color=7F9CF5&background=EBF4FF';
     }
+
+    /**
+     * Forcing single guard permission to 'web'
+     *
+     * @return string
+     */
+    public function getDefaultGuardName(): string
+    {
+        return 'web';
+    }
 }
