@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LogActivityController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Settings\BackupController;
 use App\Http\Controllers\Settings\GeneralSettingController;
@@ -12,6 +13,8 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::middleware(['auth:sanctum'])->patch('/user', UserProfileController::class);
+
+Route::middleware(['auth:sanctum'])->get('/logs', LogActivityController::class);
 
 Route::middleware(['auth:sanctum', 'role:Admin'])->get('/users', [UserController::class, 'index']);
 Route::middleware(['auth:sanctum', 'role:Admin'])->get('/users/{user}', [UserController::class, 'show']);

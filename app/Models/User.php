@@ -6,11 +6,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -57,6 +59,19 @@ class User extends Authenticatable
     protected $appends = ['role', 'photo'];
 
     /**
+     * Log Attributes
+     *
+     * @var array
+     */
+    protected static $logAttributes = [
+        'name',
+        'email',
+        'password',
+        'role.name',
+        'photo'
+    ];
+
+    /**
      * Scope a query to only include Search
      *
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -97,5 +112,10 @@ class User extends Authenticatable
     public function getDefaultGuardName(): string
     {
         return 'web';
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logFillable()->logOnlyDirty()->useLogName(config('app.name'));
     }
 }
