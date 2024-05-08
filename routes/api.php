@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\BackupController;
 use App\Http\Controllers\Settings\GeneralSettingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
@@ -19,3 +20,10 @@ Route::middleware(['auth:sanctum', 'role:Admin'])->delete('/users/{user}', [User
 
 Route::middleware(['auth:sanctum', 'role:Admin'])->get('/settings', [GeneralSettingController::class, 'index']);
 Route::middleware(['auth:sanctum', 'role:Admin'])->post('/settings', [GeneralSettingController::class, 'store']);
+
+Route::middleware(['auth:sanctum', 'role:Admin'])->get('/backup', [BackupController::class, 'index']);
+Route::middleware(['auth:sanctum', 'role:Admin'])->get('/backup/files', [BackupController::class, 'getFiles']);
+Route::middleware(['auth:sanctum', 'role:Admin'])->get('/backup/status', [BackupController::class, 'backupStatuses']);
+Route::middleware(['auth:sanctum', 'role:Admin'])->post('/backup', [BackupController::class, 'createBackup']);
+Route::middleware(['auth:sanctum', 'role:Admin'])->post('/backup/download', [BackupController::class, 'downloadBackup']);
+Route::middleware(['auth:sanctum', 'role:Admin'])->delete('/backup/delete', [BackupController::class, 'deleteFile']);
