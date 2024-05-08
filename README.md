@@ -4,7 +4,7 @@ Starterpack for make application based on Laravel 11 and API Breeze Package
 
 ### Stack & Package
 
--   Laravel 11.6.0
+-   Laravel 11.7.0
 -   Laravel Breeze (API)
 -   [Laravel Permission v6.x](https://spatie.be/docs/laravel-permission/v6/introduction)
 -   [Laravel Backup v8.x](https://spatie.be/docs/laravel-backup/v8/introduction)
