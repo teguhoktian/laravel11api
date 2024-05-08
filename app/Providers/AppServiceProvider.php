@@ -36,12 +36,10 @@ class AppServiceProvider extends ServiceProvider
     public function siteSettings(): void
     {
         $settings = app(GeneralSetting::class);
-        config(
-            ['app.timezone' => $settings->timezone],
-            ['app.locale' => $settings->locale],
-            ['app.url' => $settings->site_url],
-            ['app.asset_url' => $settings->site_url],
-            ['app.name' => $settings->site_name]
-        );
+        config(['app.timezone' => $settings->timezone]);
+        config(['app.locale' => $settings->locale]);
+        config(['app.url' => $settings->site_url]);
+        config(['app.asset_url' => $settings->site_url]);
+        config(['app.name' => $settings->site_name]);
     }
 }
